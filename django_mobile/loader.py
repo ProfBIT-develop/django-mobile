@@ -73,41 +73,6 @@ class Loader(BaseLoader):
 class CachedLoader(DjangoCachedLoader):
     is_usable = True
 
-    def cache_key(self, template_name, template_dirs, *args):
-        if len(args) > 0:  # Django >= 1.9
-            key = super(CachedLoader, self).cache_key(
-                template_name, template_dirs, *args)
-        else:
-            if template_dirs:
-                key = '-'.join([
-                    template_name,
-                    hashlib.sha1(
-                        force_bytes('|'.join(template_dirs))).hexdigest()
-                ])
-            else:
-                key = template_name
-
+    def cache_key(self, *args, **kwargs):
+        key = super(CachedLoader, self).cache_key(*args, **kwargs)
         return '{0}:{1}'.format(get_flavour(), key)
-
-    def load_template(self, template_name, template_dirs=None):
-        key = self.cache_key(template_name, template_dirs)
-        template_tuple = self.template_cache.get(key)
-
-        if template_tuple is TemplateDoesNotExist:
-            raise TemplateDoesNotExist(
-                'Template not found: %s' % template_name)
-        elif template_tuple is None:
-            template, origin = self.find_template(template_name, template_dirs)
-            if not hasattr(template, 'render'):
-                try:
-                    template = template_from_string(template)
-                except TemplateDoesNotExist:
-                    # If compiling the template we found raises TemplateDoesNotExist,
-                    # back off to returning the source and display name for the template
-                    # we were asked to load. This allows for correct identification (later)
-                    # of the actual template that does not exist.
-                    self.template_cache[key] = (template, origin)
-
-            self.template_cache[key] = (template, None)
-
-        return self.template_cache[key]
