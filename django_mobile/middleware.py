@@ -36,8 +36,8 @@ class MobileDetectionMiddleware(MiddlewareMixin):
         "upg1", "upsi", "vk-v", "voda", "wap-", "wapa",
         "wapi", "wapp", "wapr", "webc", "winw", "xda-",)
     user_agents_test_search = u"(?:%s)" % u'|'.join((
-        'up.browser', 'up.link', 'mmp', 'symbian', 'smartphone', 'midp',
-        'wap', 'phone', 'windows ce', 'pda', 'mobile', 'mini', 'palm',
+        'android', 'up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
+        'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile', 'mini', 'palm',
         'netfront', 'opera mobi', 'impad'
     ))
     user_agents_exception_search = u"(?:%s)" % u'|'.join((
